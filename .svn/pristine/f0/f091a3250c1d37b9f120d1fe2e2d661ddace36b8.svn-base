@@ -1,0 +1,121 @@
+﻿using CL_EN;
+using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Net;
+using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace CL_AD
+{
+    public class ADarchivos
+    {
+        MiConexion micx = new MiConexion();
+        public ENarchivos VERSION1_SP_recuperarSlugConIndiceProducto(string id_producto)
+        {
+            string cadenaConexion = micx.TraerMiConexion();
+            ENarchivos ent = new ENarchivos();
+            try
+            {
+                using var conexion = new SqlConnection(cadenaConexion);
+
+                SqlParameter[] Parametro = new SqlParameter[1];
+                Parametro[0] = new SqlParameter("@id_producto", SqlDbType.VarChar);
+                Parametro[0].Direction = ParameterDirection.Input;
+                Parametro[0].Value = id_producto;
+
+                using var reader = SqlHelper.ExecuteReader(conexion, CommandType.StoredProcedure, "VERSION1_SP_recuperarSlugConIndiceProducto", Parametro);
+                while (reader.Read())
+                {
+                    ent.NombreSlug = DataUtil.ObjectToString(reader["NombreSlug"]);
+                    ent.IndiceImagen = DataUtil.ObjectToString(reader["IndiceImagen"]);
+                    ent.MensajeConsulta = "Exito";
+                    ent.ValorConsulta = "1";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "ERROR : " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+            return ent;
+        }
+
+
+
+        public ENarchivos VERSION1_SP_guardarRutaImagenPorProducto(string id_producto, string url_imagen, string id_usuario)
+        {
+            string cadenaConexion = micx.TraerMiConexion();
+            ENarchivos ent = new ENarchivos();
+            try
+            {
+                using var conexion = new SqlConnection(cadenaConexion);
+
+                SqlParameter[] Parametro = new SqlParameter[3];
+                Parametro[0] = new SqlParameter("@id_producto", SqlDbType.Int);
+                Parametro[0].Direction = ParameterDirection.Input;
+                Parametro[0].Value = Convert.ToInt32(id_producto);
+
+                Parametro[1] = new SqlParameter("@url_imagen", SqlDbType.VarChar);
+                Parametro[1].Direction = ParameterDirection.Input;
+                Parametro[1].Value = url_imagen;
+
+                Parametro[2] = new SqlParameter("@id_usuario", SqlDbType.Int);
+                Parametro[2].Direction = ParameterDirection.Input;
+                Parametro[2].Value = Convert.ToInt32(id_usuario);
+
+                using var reader = SqlHelper.ExecuteReader(conexion, CommandType.StoredProcedure, "VERSION1_SP_guardarRutaImagenPorProducto", Parametro);
+                while (reader.Read())
+                {
+                    ent.ValorConsulta = DataUtil.ObjectToString(reader["Resultado"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "ERROR : " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+            return ent;
+        }
+
+        public ENarchivos VERSION1_SP_guardarRutaPdfPorProducto(string id_producto, string url_imagen, string id_usuario)
+        {
+            string cadenaConexion = micx.TraerMiConexion();
+            ENarchivos ent = new ENarchivos();
+
+            try
+            {
+                using var conexion = new SqlConnection(cadenaConexion);
+                SqlParameter[] Parametro = new SqlParameter[3];
+
+                Parametro[0] = new SqlParameter("@id_producto", SqlDbType.Int);
+                Parametro[0].Direction = ParameterDirection.Input;
+                Parametro[0].Value = Convert.ToInt32(id_producto);
+
+                Parametro[1] = new SqlParameter("@url_imagen", SqlDbType.VarChar);
+                Parametro[1].Direction = ParameterDirection.Input;
+                Parametro[1].Value = url_imagen;
+
+                Parametro[2] = new SqlParameter("@id_usuario", SqlDbType.Int);
+                Parametro[2].Direction = ParameterDirection.Input;
+                Parametro[2].Value = Convert.ToInt32(id_usuario);
+
+                using var reader = SqlHelper.ExecuteReader(conexion, CommandType.StoredProcedure, "VERSION1_SP_guardarRutaPdfPorProducto", Parametro);
+                while (reader.Read())
+                {
+                    ent.ValorConsulta = DataUtil.ObjectToString(reader["Resultado"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "ERROR : " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+            return ent;
+        }
+    }
+}

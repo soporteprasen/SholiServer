@@ -1,0 +1,14 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "CadenaConexionSQL": "n9/6G4i985QbTQVuJM6Tn97l6QkY8tebQh/0QmIqZMkHfQiadZ5sxHHin/WMSzUvqq2stOW8lVfynSdOOU+o5Q=="
+  }
+
+
+}

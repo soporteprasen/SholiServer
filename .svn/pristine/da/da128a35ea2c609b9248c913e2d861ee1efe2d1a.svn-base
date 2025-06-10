@@ -1,0 +1,146 @@
+﻿using CL_AD;
+using CL_EN;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace CL_LN
+{
+    public class LNproductos
+    {
+        private static readonly IConfigurationRoot _config;
+        /*
+         * PROCESOS DE LISTADO
+         */
+        public List<ENproductos> listarProductosDestacados()
+        {
+            var res = new ADproductos().VERSION1_SP_listarMenuProductoWeb();
+            return res;
+        }
+        public List<ENcategorias> listarCategoriasProductos()
+        {
+            var res = new ADproductos().VERSION1_SP_listar_categorias_productos();
+            return res;
+        }
+        public List<ENmarcas> listarMarcasProductos()
+        {
+            var res = new ADproductos().VERSION1_SP_listar_marcas();
+            return res;
+        }
+
+
+
+
+
+
+
+        /*
+         * PROCESOS DE GUARDADO
+         */
+        public ENproductos guardarCrearProducto(ENproductos DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardarProductoWeb(DatosEnviados);
+            return res;
+        }
+
+        public ENcategorias guardarCrearCategoria(ENcategorias DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardar_categorias_productos(DatosEnviados);
+            return res;
+        }
+
+        public ENmarcas guardarCrearMarca(ENmarcas DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardar_marcas_productos(DatosEnviados);
+            return res;
+        }
+
+        public ENMensajeWsp TraerMensaje()
+        {
+            var ent = new ENMensajeWsp();
+            string ruta = Path.Combine(AppContext.BaseDirectory, "Mensajes.json");
+
+            try
+            {
+                using (var stream = new FileStream(ruta, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var reader = new StreamReader(stream))
+                {
+                    string json = reader.ReadToEnd();
+
+                    // Deserializar a diccionario
+                    var datos = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+                    if (datos == null)
+                        throw new Exception("No se pudo deserializar el archivo JSON.");
+
+                    ent.Msj_wsp_g = datos.GetValueOrDefault("mensajeglobal", "");
+                    ent.Msj_wsp_p = datos.GetValueOrDefault("mensajeProducto", "");
+
+                    ent.ValorConsulta = "0";
+                    ent.MensajeConsulta = "OK";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Error al leer mensajes: " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return ent;
+        }
+
+        public ENMensajeWsp ModificarMensaje(string nuevoMensaje)
+        {
+            var ent = new ENMensajeWsp();
+            string ruta = Path.Combine(AppContext.BaseDirectory, "Mensajes.json");
+
+            try
+            {
+                Dictionary<string, string> datos;
+
+                // Leer el archivo de forma segura
+                using (var stream = new FileStream(ruta, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var reader = new StreamReader(stream))
+                {
+                    string jsonOriginal = reader.ReadToEnd();
+                    datos = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonOriginal);
+
+                    if (datos == null)
+                        throw new Exception("No se pudo leer el contenido del JSON.");
+                }
+
+                // Modificar en memoria
+                datos["mensajeProducto"] = nuevoMensaje;
+
+                // Opciones de formateo JSON
+                var opciones = new JsonSerializerOptions { WriteIndented = true };
+                string jsonActualizado = JsonSerializer.Serialize(datos, opciones);
+
+                // Escribir el archivo de forma segura
+                using (var stream = new FileStream(ruta, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (var writer = new StreamWriter(stream))
+                {
+                    writer.Write(jsonActualizado);
+                }
+
+                // Rellenar entidad de retorno
+                ent.Msj_wsp_g = datos.GetValueOrDefault("mensajeglobal", "");
+                ent.Msj_wsp_p = nuevoMensaje;
+                ent.ValorConsulta = "0";
+                ent.MensajeConsulta = "mensajeProducto actualizado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                ent.ValorConsulta = "-99";
+                ent.MensajeConsulta = "Error al actualizar mensajeProducto: " + ex.Message;
+            }
+
+            return ent;
+        }
+
+    }
+}

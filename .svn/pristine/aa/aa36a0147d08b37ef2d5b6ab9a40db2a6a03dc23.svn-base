@@ -1,0 +1,60 @@
+﻿using CL_AD;
+using CL_EN;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CL_LN
+{
+    public class LNproductos
+    {
+        /*
+         * PROCESOS DE LISTADO
+         */
+        public List<ENproductos> listarProductosDestacados()
+        {
+            var res = new ADproductos().VERSION1_SP_listarMenuProductoWeb();
+            return res;
+        }
+        public List<ENcategorias> listarCategoriasProductos()
+        {
+            var res = new ADproductos().VERSION1_SP_listar_categorias_productos();
+            return res;
+        }
+        public List<ENmarcas> listarMarcasProductos()
+        {
+            var res = new ADproductos().VERSION1_SP_listar_marcas();
+            return res;
+        }
+
+
+
+
+
+
+
+        /*
+         * PROCESOS DE GUARDADO
+         */
+        public ENproductos guardarCrearProducto(ENproductos DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardarProductoWeb(DatosEnviados);
+            return res;
+        }
+
+        public ENcategorias guardarCrearCategoria(ENcategorias DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardar_categorias_productos(DatosEnviados);
+            return res;
+        }
+
+        public ENmarcas guardarCrearMarca(ENmarcas DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardar_marcas_productos(DatosEnviados);
+            return res;
+        }
+
+    }
+}

@@ -1,0 +1,61 @@
+#############################################
+# VS & ASP.NET Core ignore rules
+#############################################
+
+## Archivos de compilación y salida
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.app
+
+## Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+## Archivos de respaldo de proyectos
+*.Backup.tmp
+*.http
+
+## Archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+
+## Archivos temporales y de datos
+imagenes/
+pdfs/
+Backup/
+wwwroot/uploads/
+wwwroot/temp/
+
+## Archivos de sistema
+Thumbs.db
+ehthumbs.db
+.DS_Store
+
+## IDEs alternativos
+.idea/
+.vscode/
+
+## NPM / Node (si usás algo como Webpack)
+node_modules/
+dist/
+coverage/
+npm-debug.log
+
+## Paquetes NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+## Publicación
+publish/
+*.Publish.xml

@@ -1,0 +1,24 @@
+
+
+PAQUETES NUGET BACKEND
+
+
+En la aplicacion principal (SholiServer)
+
+SignalR 			-> 	Microsoft.AspNetCore.SignalR
+Newtonsoft.Json 		-> 	Newtonsoft.Json
+
+
+CL_AD
+
+Conexion base de datos		-> 	Microsoft.Data.SqlClient
+Leer Json de configuracion 	-> 	Microsoft.Extensions.Configuration
+"	" 	"	"	-> 	Microsoft.Extensions.Configuration.Json
+
+
+CL_LN
+
+Convertir Imagen a webp		->	SixLabors.ImageSharp
+"	"	"	"	->	SixLabors.ImageSharp.Web
+
+

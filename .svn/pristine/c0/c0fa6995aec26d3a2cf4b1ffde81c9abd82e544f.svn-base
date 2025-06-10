@@ -1,0 +1,21 @@
+﻿using CL_AD;
+using CL_EN;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CL_LN
+{
+    public class LNproductos
+    {
+
+        public List<ENproductos> listarProductosDestacados()
+        {
+            var res = new ADproductos().listarProductosPrincipales();
+            return res;
+        }
+
+    }
+}

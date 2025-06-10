@@ -1,0 +1,116 @@
+﻿using CL_AD;
+using CL_EN;
+using SixLabors.ImageSharp.Formats.Webp;
+
+namespace CL_LN
+{
+    public class LNarchivos
+    {
+        public ENarchivos VERSION1_SP_recuperarSlugConIndiceProducto(string id_producto)
+        {
+            var res = new ADarchivos().VERSION1_SP_recuperarSlugConIndiceProducto(id_producto);
+            return res;
+        }
+
+
+
+        public ENarchivos GuardarArchivo(string contenidoBase64, string nombreSlug, int indiceImagen, string rutawwwroot, string id_producto, string id_usuario, string tipo)
+        {
+            ENarchivos ent = new ENarchivos();
+            try
+            {
+                string nombreArchivo = "";
+                string rutaFisica = "";
+
+                var datosProducto = new ADproductos(rutawwwroot).VERSION1_SP_ListarProductoxID(int.Parse(id_producto));
+
+                if (!string.IsNullOrEmpty(datosProducto.ficha))
+                {
+                    var rutaFisicaVieja = Path.Combine(rutawwwroot, Path.GetFileName(datosProducto.ficha));
+
+                    if (File.Exists(rutaFisicaVieja))
+                    {
+                        var carpetaPDFs = Path.GetDirectoryName(rutaFisicaVieja);
+                        var carpetaRaiz = Directory.GetParent(carpetaPDFs).FullName;
+
+                        string rutaRespaldo = Path.Combine(carpetaRaiz, "Backup", "pdfs_respaldo");
+
+                        Directory.CreateDirectory(rutaRespaldo);
+
+                        string nombreRespaldo = Path.GetFileNameWithoutExtension(rutaFisicaVieja) + "_" +
+                                                DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".pdf";
+
+                        string rutaArchivoRespaldo = Path.Combine(rutaRespaldo, nombreRespaldo);
+
+                        File.Move(rutaFisicaVieja, rutaArchivoRespaldo);
+                    }
+                }
+
+                if (tipo == "application/pdf")
+                {
+                    var random = new Random();
+                    char letraAleatoria = (char)random.Next('A', 'Z' + 1);
+                    string numeroAleatorio = random.Next(0, 100).ToString("D2");
+
+                    nombreArchivo = nombreSlug + "_" + letraAleatoria + numeroAleatorio + ".pdf";
+                    rutaFisica = Path.Combine(rutawwwroot, nombreArchivo);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(rutaFisica));
+
+                    byte[] bytes = Convert.FromBase64String(contenidoBase64);
+                    File.WriteAllBytes(rutaFisica, bytes);
+
+                    if (File.Exists(rutaFisica))
+                    {
+                        ent.ValorConsulta = "1";
+                        ent.RutaArchivo = "/pdfs/" + nombreArchivo;
+                    }
+                    else
+                    {
+                        ent.ValorConsulta = "3";
+                    }
+                }
+                else if (tipo == "image/jpeg" || tipo == "image/jpg" || tipo == "image/png" || tipo == "image/webp")
+                {
+                    nombreArchivo = nombreSlug + "_" + indiceImagen.ToString() + ".webp";
+                    rutaFisica = Path.Combine(rutawwwroot, nombreArchivo);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(rutaFisica));
+
+                    byte[] bytes = Convert.FromBase64String(contenidoBase64);
+                    using var imagen = Image.Load(bytes);
+
+                    var encoder = new WebpEncoder
+                    {
+                        Quality = 75,
+                        FileFormat = WebpFileFormatType.Lossy
+                    };
+
+                    imagen.Save(rutaFisica, encoder);
+
+                    if (File.Exists(rutaFisica))
+                    {
+                        ent.ValorConsulta = "1";
+                        ent.RutaArchivo = "/img/" + nombreArchivo;
+                    }
+                    else
+                    {
+                        ent.ValorConsulta = "3";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.ValorConsulta = "-99";
+                ent.MensajeConsulta = "ERROR: " + ex.Message;
+            }
+
+            return ent;
+        }
+
+
+
+
+
+    }
+}

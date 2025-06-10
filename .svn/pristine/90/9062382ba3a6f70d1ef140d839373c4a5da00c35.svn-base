@@ -1,0 +1,309 @@
+﻿using CL_EN;
+using CL_LN;
+using Microsoft.AspNetCore.Mvc;
+using SholiServer.ConexionAplicaciones;
+
+namespace SholiServer.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class CTproductosController : ControllerBase
+    {
+
+        /*
+         * PROCESOS DE LISTADOS
+         */
+
+        [HttpPost("listarProductosPrincipales")]
+        public async Task<IActionResult> listarProductosPrincipales([FromBody] ENrecibirDatosCargaInicial DatosEnviados)
+        {
+            List<ENproductos> resFinal = new List<ENproductos>();
+
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    resFinal = new LNproductos().listarProductosDestacados();
+                }
+                else
+                {
+                    ENproductos ent = new ENproductos();
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                    resFinal.Add(ent);
+                }
+            }
+            catch (Exception ex)
+            {
+                ENproductos ent = new ENproductos();
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+                resFinal.Add(ent);
+            }
+
+            return Ok(resFinal);
+        }
+
+
+        public class ENrecibirDatosCargaInicial()
+        {
+            public string Token { get; set; }
+            public string Vista { get; set; }
+
+        }
+
+        [HttpPost("listarCategoriasProductos")]
+        public async Task<IActionResult> listarCategoriasProductos([FromBody] ENrecibirListarAtributos DatosEnviados)
+        {
+            List<ENcategorias> resFinal = new List<ENcategorias>();
+
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    resFinal = new LNproductos().listarCategoriasProductos();
+                }
+                else
+                {
+                    ENcategorias ent = new ENcategorias();
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                    resFinal.Add(ent);
+                }
+            }
+            catch (Exception ex)
+            {
+                ENcategorias ent = new ENcategorias();
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+                resFinal.Add(ent);
+            }
+
+            return Ok(resFinal);
+        }
+
+        [HttpPost("listarMarcasProductos")]
+        public async Task<IActionResult> listarMarcasProductos([FromBody] ENrecibirListarAtributos DatosEnviados)
+        {
+            List<ENmarcas> resFinal = new List<ENmarcas>();
+
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    resFinal = new LNproductos().listarMarcasProductos();
+                }
+                else
+                {
+                    ENmarcas ent = new ENmarcas();
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                    resFinal.Add(ent);
+                }
+            }
+            catch (Exception ex)
+            {
+                ENmarcas ent = new ENmarcas();
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+                resFinal.Add(ent);
+            }
+
+            return Ok(resFinal);
+        }
+        public class ENrecibirListarAtributos()
+        {
+            public string Token { get; set; }
+
+        }
+
+
+
+
+        /*
+         * PROCESOS DE GUARDADO
+         */
+
+        [HttpPost("guardarCrearProducto")]
+        public async Task<IActionResult> guardarCrearProducto([FromBody] ENproductos DatosEnviados)
+        {
+            ENproductos ent = new ENproductos();
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    //LLAMAR AL GESGLI PARA OBTENER EL NOMBRE DEL SLUG DEL PRODUCTO
+
+                    var nombre_slug = new ConexionGescli().ObtenerSlugProductoIndividual(DatosEnviados.Nombre);
+
+
+                    if (nombre_slug.ValorConsulta == "1" && nombre_slug.NombreSlug.Length > 3)
+                    {
+                        DatosEnviados.NombreSlug = nombre_slug.NombreSlug;
+                        ent = new LNproductos().guardarCrearProducto(DatosEnviados);
+                    }
+                    else
+                    {
+                        ent.MensajeConsulta = "ERROR : No se ha obtendido un valorConsulta o slug Valido " + nombre_slug.MensajeConsulta;
+                        ent.ValorConsulta = nombre_slug.ValorConsulta;
+                    }
+
+                }
+                else
+                {
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return Ok(ent);
+        }
+
+
+        [HttpPost("guardarCrearCategoria")]
+        public async Task<IActionResult> guardarCrearCategoria([FromBody] ENcategorias DatosEnviados)
+        {
+            ENcategorias ent = new ENcategorias();
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    //LLAMAR AL GESGLI PARA OBTENER EL NOMBRE DEL SLUG DEL PRODUCTO
+
+                    //var nombre_slug_categoria = new ConexionGescli().ObtenerSlugProductoIndividual(DatosEnviados.Nombre);
+                    var slug_marca = DatosEnviados.Nombre.Replace(" ", "-");
+                    DatosEnviados.Slug_categoria = slug_marca;
+
+                    ent = new LNproductos().guardarCrearCategoria(DatosEnviados);
+
+                    //if (nombre_slug_categoria.ValorConsulta == "1" && nombre_slug_categoria.NombreSlug.Length > 3)
+                    //{
+                    //    DatosEnviados.Slug_categoria = nombre_slug_categoria.NombreSlug;
+                    //    ent = new LNproductos().guardarCrearCategoria(DatosEnviados);
+                    //}
+                    //else
+                    //{
+                    //    ent.MensajeConsulta = "ERROR : No se ha obtendido un valorConsulta o slug Valido " + nombre_slug_categoria.MensajeConsulta;
+                    //    ent.ValorConsulta = nombre_slug_categoria.ValorConsulta;
+                    //}
+
+                }
+                else
+                {
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return Ok(ent);
+        }
+
+
+
+        [HttpPost("guardarCrearMarca")]
+        public async Task<IActionResult> guardarCrearMarca([FromBody] ENmarcas DatosEnviados)
+        {
+            ENmarcas ent = new ENmarcas();
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    //LLAMAR AL GESGLI PARA OBTENER EL NOMBRE DEL SLUG DEL PRODUCTO
+
+                    //var nombre_slug_marca = new ConexionGescli().ObtenerSlugProductoIndividual(DatosEnviados.Nombre);
+
+                    var slug_marca = DatosEnviados.Nombre.Replace(" ", "-");
+                    DatosEnviados.Slug_marca = slug_marca;
+
+                    ent = new LNproductos().guardarCrearMarca(DatosEnviados);
+
+                    //if (nombre_slug_marca.ValorConsulta == "1" && nombre_slug_marca.NombreSlug.Length > 3)
+                    //{
+                    //    DatosEnviados.Slug_categoria = nombre_slug_marca.NombreSlug;
+                    //    ent = new LNproductos().guardarCrearCategoria(DatosEnviados);
+                    //}
+                    //else
+                    //{
+                    //    ent.MensajeConsulta = "ERROR : No se ha obtendido un valorConsulta o slug Valido " + nombre_slug_marca.MensajeConsulta;
+                    //    ent.ValorConsulta = nombre_slug_marca.ValorConsulta;
+                    //}
+
+                }
+                else
+                {
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return Ok(ent);
+        }
+
+        [HttpPost("TraerMensajeWsp")]
+        public async Task<IActionResult> TraerMensajewsp([FromBody] ENrecibirListarAtributos DatosEnviados)
+        {
+            ENMensajeWsp ent = new ENMensajeWsp();
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    ent = new LNproductos().TraerMensaje();
+                }
+                else
+                {
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return Ok(ent);
+        }
+
+        [HttpPost("CambiarMensajeWsp")]
+        public async Task<IActionResult> CambiarMensajewsp([FromBody] ENMensajeWsp DatosEnviados)
+        {
+            ENMensajeWsp ent = new ENMensajeWsp();
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    
+                    ent = new LNproductos().ModificarMensaje(DatosEnviados.MensajeProducto,DatosEnviados.MensajeGlobal);
+                }
+                else
+                {
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return Ok(ent);
+        }
+
+    }
+}

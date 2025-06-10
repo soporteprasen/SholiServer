@@ -1,0 +1,187 @@
+﻿using CL_AD;
+using CL_EN;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+
+namespace CL_LN
+{
+    public class LNproductos
+    {
+        private static readonly IConfigurationRoot _config;
+        /*
+         * PROCESOS DE LISTADO
+         */
+        public List<ENproductos> listarProductosDestacados()
+        {
+            var res = new ADproductos().VERSION1_SP_listarMenuProductoWeb();
+            return res;
+        }
+        public List<ENcategorias> listarCategoriasProductos()
+        {
+            var res = new ADproductos().VERSION1_SP_listar_categorias_productos();
+            return res;
+        }
+        public List<ENmarcas> listarMarcasProductos()
+        {
+            var res = new ADproductos().VERSION1_SP_listar_marcas();
+            return res;
+        }
+
+
+
+
+
+
+
+        /*
+         * PROCESOS DE GUARDADO
+         */
+        public ENproductos guardarCrearProducto(ENproductos DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardarProductoWeb(DatosEnviados);
+            return res;
+        }
+
+        public ENcategorias guardarCrearCategoria(ENcategorias DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardar_categorias_productos(DatosEnviados);
+            return res;
+        }
+
+        public ENmarcas guardarCrearMarca(ENmarcas DatosEnviados)
+        {
+            var res = new ADproductos().VERSION1_SP_guardar_marcas_productos(DatosEnviados);
+            return res;
+        }
+
+        public ENMensajeWsp TraerMensaje()
+        {
+            // 1️⃣ Construye la ruta completa al archivo "Mensajes.json"
+            // Combina el directorio actual donde corre la aplicación con el nombre del archivo.
+            string ruta = Path.Combine(Directory.GetCurrentDirectory(), "Mensajes.json");
+
+            try
+            {
+                // 2️⃣ Lee todo el contenido del archivo JSON usando codificación UTF-8
+                // Esto asegura que se lean correctamente caracteres especiales como á, ñ, etc.
+                string json = File.ReadAllText(ruta, Encoding.UTF8);
+
+                // 3️⃣ Deserializa el contenido JSON directamente a una instancia de la clase ENMensajeWsp
+                // Si la deserialización devuelve null (caso extremo), crea una nueva instancia vacía.
+                var ent = JsonSerializer.Deserialize<ENMensajeWsp>(json) ?? new ENMensajeWsp();
+
+                // 4️⃣ Asigna valores de éxito a la entidad
+                // ValorConsulta = "1" indica éxito, MensajeConsulta = "OK" como mensaje estándar.
+                ent.ValorConsulta = "1";
+                ent.MensajeConsulta = "OK";
+
+                // 5️⃣ Devuelve la entidad llena con los datos deserializados y el mensaje de éxito
+                return ent;
+            }
+            catch (Exception ex)
+            {
+                // ⚠️ Manejo de errores
+                // Si ocurre cualquier excepción durante lectura o deserialización:
+                // - Devuelve una nueva instancia de ENMensajeWsp
+                // - Informa el mensaje de error capturado
+                // - ValorConsulta = "-99" indica un error en la operación
+                return new ENMensajeWsp
+                {
+                    MensajeConsulta = "Error al leer mensajes: " + ex.Message,
+                    ValorConsulta = "-99"
+                };
+            }
+        }
+
+        public ENMensajeWsp ModificarMensaje(string mensajeProducto, string mensajeGlobal)
+        {
+            // 1️⃣ Define codificación UTF-8 sin BOM para escribir el archivo.
+            // "false" significa que no incluirá los 3 bytes de marca de inicio (BOM), que puede ser problemático en algunos parsers JSON.
+            var utf8WithoutBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+            // 2️⃣ Instancia un objeto de respuesta que se devolverá al final del método.
+            var ent = new ENMensajeWsp();
+
+            // 3️⃣ Construye la ruta completa al archivo "Mensajes.json".
+            string ruta = Path.Combine(Directory.GetCurrentDirectory(), "Mensajes.json");
+
+            try
+            {
+                // 4️⃣ Lee todo el contenido del archivo JSON.
+                // NOTA: Esta lectura no especifica codificación, por defecto usa UTF-8 con BOM si existe.
+                string jsonOriginal = File.ReadAllText(ruta);
+
+                // 5️⃣ Deserializa el JSON en un objeto de tipo ENMensajeWsp.
+                // Si por alguna razón falla y devuelve null, crea un objeto nuevo vacío.
+                var datos = JsonSerializer.Deserialize<ENMensajeWsp>(jsonOriginal) ?? new ENMensajeWsp();
+
+                // 6️⃣ Variable bandera para saber si se han hecho cambios que requieran guardar el archivo.
+                bool cambios = false;
+
+                // 7️⃣ Validación y actualización:
+                // Si el nuevo mensajeProducto no es nulo/vacío y tiene más de 5 caracteres, actualiza y marca cambios.
+                if (!string.IsNullOrEmpty(mensajeProducto) && mensajeProducto.Length > 5)
+                {
+                    datos.MensajeProducto = mensajeProducto;
+                    cambios = true;
+                }
+                // 8️⃣ Lo mismo para mensajeGlobal.
+                if (!string.IsNullOrEmpty(mensajeGlobal) && mensajeGlobal.Length > 5)
+                {
+                    datos.MensajeGlobal = mensajeGlobal;
+                    cambios = true;
+                }
+
+                // 9️⃣ Solo si hubo cambios, serialize y escribe el archivo.
+                if (cambios)
+                {
+                    // 10️⃣ Opciones de serialización:
+                    // - WriteIndented: formato bonito y legible
+                    // - Encoder: permite caracteres especiales sin escapar (á, ñ, ü, etc.).
+                    var opciones = new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    };
+
+                    // 11️⃣ Serializa el objeto actualizado a JSON respetando las opciones configuradas.
+                    string jsonActualizado = JsonSerializer.Serialize(datos, opciones);
+
+                    // 12️⃣ Escribe el nuevo contenido en el archivo usando UTF-8 sin BOM.
+                    File.WriteAllText(ruta, jsonActualizado, utf8WithoutBom);
+
+                    // 13️⃣ Prepara el objeto de respuesta indicando éxito.
+                    ent.MensajeProducto = datos.MensajeProducto;
+                    ent.MensajeGlobal = datos.MensajeGlobal;
+                    ent.ValorConsulta = "1"; // éxito
+                    ent.MensajeConsulta = "Mensajes actualizados correctamente.";
+                }
+                else
+                {
+                    // 14️⃣ Si no hubo cambios, devolver mensaje de "sin cambios" pero con éxito.
+                    ent.ValorConsulta = "1"; // sigue siendo éxito porque no es un error grave
+                    ent.MensajeConsulta = "No se realizaron cambios (los mensajes eran inválidos o muy cortos).";
+                }
+            }
+            catch (Exception ex)
+            {
+                // ⚠️ 15️⃣ Manejo de errores:
+                // Si ocurre cualquier excepción durante lectura, deserialización o escritura:
+                // - ValorConsulta: "-99" como código de error
+                // - MensajeConsulta: mensaje de error para diagnóstico
+                ent.ValorConsulta = "-99";
+                ent.MensajeConsulta = "Error al actualizar mensajes: " + ex.Message;
+            }
+
+            // 16️⃣ Devuelve el objeto con el resultado de la operación (éxito o error).
+            return ent;
+        }
+
+    }
+}

@@ -1,0 +1,124 @@
+﻿
+using CL_EN;
+using Microsoft.Data.SqlClient;
+using System.Data;
+
+namespace CL_AD
+{
+    public class ADproductos
+    {
+        MiConexion micx = new MiConexion();
+        public List<ENproductos> VERSION1_SP_listarMenuProductoWeb()
+        {
+            string cadenaConexion = micx.TraerMiConexion();
+            List<ENproductos> lista = new List<ENproductos>();
+            try
+            {
+                using var conexion = new SqlConnection(cadenaConexion);
+
+                using var reader = SqlHelper.ExecuteReader(conexion, CommandType.StoredProcedure, "VERSION1_SP_listarMenuProductoWeb");
+                while (reader.Read())
+                {
+                    ENproductos ent = new ENproductos();
+                    ent.Id_producto =  DataUtil.ObjectToString(reader["id_producto"]);
+                    ent.Codigo = DataUtil.ObjectToString(reader["codigo"]);
+                    ent.Nombre = DataUtil.ObjectToString(reader["nombre"]);
+                    ent.Descripcion = DataUtil.ObjectToString(reader["descripcion"]);
+                    ent.Precio = DataUtil.ObjectToDecimal(reader["precio"]);
+                    ent.Descuento = DataUtil.ObjectToDecimal(reader["descuento"]);
+                    ent.Stock = DataUtil.ObjectToDecimal(reader["stock"]);
+                    ent.NombreSlug = DataUtil.ObjectToString(reader["nombre_slug"]);
+                    ent.UrlImagen1 = DataUtil.ObjectToString(reader["urlImagen1"]);
+                    ent.UrlImagen2 = DataUtil.ObjectToString(reader["urlImagen2"]);
+                    ent.Marca = DataUtil.ObjectToString(reader["marca"]);
+                    ent.Categoria = DataUtil.ObjectToString(reader["categoria"]);
+                    ent.MensajeConsulta = "Exito";
+                    ent.ValorConsulta = "1";
+                    lista.Add(ent);
+                }
+            }
+            catch (Exception ex)
+            {
+                lista.Clear();
+                ENproductos ent = new ENproductos();
+                ent.MensajeConsulta = "ERROR : " + ex.Message;
+                ent.ValorConsulta = "-99";
+                lista.Add(ent);
+            }
+            return lista;
+        }
+
+        public ENproductos VERSION1_SP_guardarProductoWeb(ENproductos DatosEnviados)
+        {
+            string cadenaConexion = micx.TraerMiConexion();
+            ENproductos ent = new ENproductos();
+            try
+            {
+                using var conexion = new SqlConnection(cadenaConexion);
+
+                SqlParameter[] Parametro = new SqlParameter[12];
+                Parametro[0] = new SqlParameter("@codigo", SqlDbType.VarChar);
+                Parametro[0].Direction = ParameterDirection.Input;
+                Parametro[0].Value = DatosEnviados.Codigo;
+
+                Parametro[1] = new SqlParameter("@nombre", SqlDbType.VarChar);
+                Parametro[1].Direction = ParameterDirection.Input;
+                Parametro[1].Value = DatosEnviados.Nombre;
+
+                Parametro[2] = new SqlParameter("@descripcion", SqlDbType.VarChar);
+                Parametro[2].Direction = ParameterDirection.Input;
+                Parametro[2].Value = DatosEnviados.Descripcion;
+
+                Parametro[3] = new SqlParameter("@precio", SqlDbType.Decimal);
+                Parametro[3].Direction = ParameterDirection.Input;
+                Parametro[3].Value = Convert.ToDecimal(DatosEnviados.Precio);
+
+                Parametro[4] = new SqlParameter("@descuento", SqlDbType.VarChar);
+                Parametro[4].Direction = ParameterDirection.Input;
+                Parametro[4].Value = Convert.ToDecimal(DatosEnviados.Descuento);
+
+                Parametro[5] = new SqlParameter("@stock", SqlDbType.VarChar);
+                Parametro[5].Direction = ParameterDirection.Input;
+                Parametro[5].Value = Convert.ToDecimal(DatosEnviados.Stock);
+
+                Parametro[6] = new SqlParameter("@nombre_slug", SqlDbType.VarChar);
+                Parametro[6].Direction = ParameterDirection.Input;
+                Parametro[6].Value = DatosEnviados.NombreSlug;
+
+                Parametro[7] = new SqlParameter("@urlimagen1", SqlDbType.VarChar);
+                Parametro[7].Direction = ParameterDirection.Input;
+                Parametro[7].Value = DatosEnviados.UrlImagen1;
+
+                Parametro[8] = new SqlParameter("@urlimagen2", SqlDbType.VarChar);
+                Parametro[8].Direction = ParameterDirection.Input;
+                Parametro[8].Value = DatosEnviados.UrlImagen2;
+
+                Parametro[9] = new SqlParameter("@id_marca", SqlDbType.VarChar);
+                Parametro[9].Direction = ParameterDirection.Input;
+                Parametro[9].Value = DatosEnviados.Marca;
+
+                Parametro[10] = new SqlParameter("@id_categoria", SqlDbType.VarChar);
+                Parametro[10].Direction = ParameterDirection.Input;
+                Parametro[10].Value = DatosEnviados.Categoria;
+
+                Parametro[11] = new SqlParameter("@id_usuario", SqlDbType.VarChar);
+                Parametro[11].Direction = ParameterDirection.Input;
+                Parametro[11].Value = "1";
+
+
+                using var reader = SqlHelper.ExecuteReader(conexion, CommandType.StoredProcedure, "VERSION1_SP_guardarProductoWeb", Parametro);
+                while (reader.Read())
+                {
+                    ent.ValorConsulta = DataUtil.ObjectToString(reader["Resultado"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "ERROR : " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+            return ent;
+        }
+
+    }
+}

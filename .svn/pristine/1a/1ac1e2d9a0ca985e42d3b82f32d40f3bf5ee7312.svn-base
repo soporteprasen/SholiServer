@@ -1,0 +1,68 @@
+﻿using CL_AD;
+using CL_EN;
+using SixLabors.ImageSharp.Formats.Webp;
+
+namespace CL_LN
+{
+    public class LNarchivos
+    {
+        public ENarchivos VERSION1_SP_recuperarSlugConIndiceProducto(string id_producto)
+        {
+            var res = new ADarchivos().VERSION1_SP_recuperarSlugConIndiceProducto(id_producto);
+            return res;
+        }
+
+
+
+        public ENarchivos GuardarArchivo(string contenidoBase64, string nombreSlug, int indiceImagen, string rutawwwroot, string id_producto, string id_usuario)
+        {
+            ENarchivos ent = new ENarchivos();
+            try
+            {
+                string nombreArchivo = "";
+                // Decodificar el contenido Base64
+                byte[] bytes = Convert.FromBase64String(contenidoBase64);
+                using var imagen = Image.Load(bytes);
+
+                var encoder = new WebpEncoder
+                {
+                    Quality = 75,
+                    FileFormat = WebpFileFormatType.Lossy  // o Lossless si querés calidad sin pérdida
+                };
+
+                nombreArchivo = nombreSlug + "_" + indiceImagen.ToString() + ".webp";
+                string rutaFisica = Path.Combine(rutawwwroot, "imagenes", "productos", nombreArchivo);
+
+                // Asegurate de que la carpeta exista
+                Directory.CreateDirectory(Path.GetDirectoryName(rutaFisica));
+
+                // Guardar la imagen .webp convertida
+                imagen.Save(rutaFisica, encoder);
+
+
+                //guardar aqui en base de datos la ruta de la imagen
+
+                var resguardado = new ADarchivos().VERSION1_SP_guardarRutaImagenPorProducto(id_producto, "/imagenes/productos/" + nombreArchivo, "1");
+
+                if(resguardado.ValorConsulta == "1" && File.Exists(rutaFisica))
+                {
+                    ent.ValorConsulta = "1";
+                }
+                else
+                {
+                    ent.ValorConsulta = "2"; //no se ha guardado la imagen
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ent.ValorConsulta = "-99";
+                ent.MensajeConsulta = "ERROR: " + ex.Message;
+            }
+
+            return ent;
+        }
+
+
+    }
+}

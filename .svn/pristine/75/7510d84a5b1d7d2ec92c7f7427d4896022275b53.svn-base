@@ -1,0 +1,119 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{010F0B0F-722B-40A1-9C66-8A4E0950BE9B}|..\\CL_EN\\CL_EN.csproj|c:\\users\\sopopra3\\desktop\\vtortoiser\\paginaweb\\sholiserver\\cl_en\\enproductos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FB4C865-409E-4260-B5CF-765BA3BB3CA3}|SholiServer.csproj|c:\\users\\sopopra3\\desktop\\vtortoiser\\paginaweb\\sholiserver\\sholiserver\\controllers\\ctproductoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FB4C865-409E-4260-B5CF-765BA3BB3CA3}|SholiServer.csproj|solutionrelative:controllers\\ctproductoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FB4C865-409E-4260-B5CF-765BA3BB3CA3}|SholiServer.csproj|c:\\users\\sopopra3\\desktop\\vtortoiser\\paginaweb\\sholiserver\\sholiserver\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FB4C865-409E-4260-B5CF-765BA3BB3CA3}|SholiServer.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB9B4818-4DBC-44BF-8D43-98B93570E2F8}|..\\CL_AD\\CL_AD.csproj|c:\\users\\sopopra3\\desktop\\vtortoiser\\paginaweb\\sholiserver\\cl_ad\\adproductos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB1DCD12-D801-4A04-9C9B-B7B41265A46E}|..\\CL_LN\\CL_LN.csproj|c:\\users\\sopopra3\\desktop\\vtortoiser\\paginaweb\\sholiserver\\cl_ln\\lnproductos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FB4C865-409E-4260-B5CF-765BA3BB3CA3}|SholiServer.csproj|c:\\users\\sopopra3\\desktop\\vtortoiser\\paginaweb\\sholiserver\\sholiserver\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3FB4C865-409E-4260-B5CF-765BA3BB3CA3}|SholiServer.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-05-15T17:10:49.777Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CTproductosController.cs",
+              "DocumentMoniker": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\Controllers\\CTproductosController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CTproductosController.cs",
+              "ToolTip": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\Controllers\\CTproductosController.cs",
+              "RelativeToolTip": "Controllers\\CTproductosController.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAgwCYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T16:54:26.487Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LNproductos.cs",
+              "DocumentMoniker": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\CL_LN\\LNproductos.cs",
+              "RelativeDocumentMoniker": "..\\CL_LN\\LNproductos.cs",
+              "ToolTip": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\CL_LN\\LNproductos.cs",
+              "RelativeToolTip": "..\\CL_LN\\LNproductos.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T16:56:31.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ADproductos.cs",
+              "DocumentMoniker": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\CL_AD\\ADproductos.cs",
+              "RelativeDocumentMoniker": "..\\CL_AD\\ADproductos.cs",
+              "ToolTip": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\CL_AD\\ADproductos.cs",
+              "RelativeToolTip": "..\\CL_AD\\ADproductos.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T17:01:30.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ENproductos.cs",
+              "DocumentMoniker": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\CL_EN\\ENproductos.cs",
+              "RelativeDocumentMoniker": "..\\CL_EN\\ENproductos.cs",
+              "ToolTip": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\CL_EN\\ENproductos.cs",
+              "RelativeToolTip": "..\\CL_EN\\ENproductos.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T16:56:08.262Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\SOPOPRA3\\Desktop\\VTortoiser\\PaginaWeb\\SholiServer\\SholiServer\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T16:49:54.944Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

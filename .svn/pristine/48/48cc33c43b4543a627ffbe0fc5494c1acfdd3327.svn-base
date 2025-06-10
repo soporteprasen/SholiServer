@@ -1,0 +1,49 @@
+﻿using CL_EN;
+using CL_LN;
+using Microsoft.AspNetCore.Mvc;
+
+namespace SholiServer.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class CTproductosController : ControllerBase
+    {
+        [HttpPost("listarProductosPrincipales")]
+        public async Task<IActionResult> listarProductosPrincipales([FromBody] ENrecibirDatosCargaInicial DatosEnviados)
+        {
+            List<ENproductos> resFinal = new List<ENproductos>();
+
+            try
+            {
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    resFinal = new LNproductos().listarProductosDestacados();
+                }
+                else
+                {
+                    ENproductos ent = new ENproductos();
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                    resFinal.Add(ent);
+                }
+            }
+            catch (Exception ex)
+            {
+                ENproductos ent = new ENproductos();
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+                resFinal.Add(ent);
+            }
+
+            return Ok(resFinal);
+        }
+
+
+        public class ENrecibirDatosCargaInicial()
+        {
+            public string Token { get; set; }
+            public string Vista { get; set; }
+
+        }
+    }
+}

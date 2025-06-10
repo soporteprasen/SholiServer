@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CL_EN
+{
+    public class ENarchivos
+    {
+        public string? NombreSlug { get; set; }
+        public string? IndiceImagen { get; set; }
+        public string? MensajeConsulta { get; set; }
+        public string? ValorConsulta { get; set; }
+    }
+}

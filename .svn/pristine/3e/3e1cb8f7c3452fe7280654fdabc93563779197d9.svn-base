@@ -1,0 +1,91 @@
+﻿using CL_EN;
+using CL_LN;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace SholiServer.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class CTarchivosController : ControllerBase
+    {
+        private readonly IWebHostEnvironment _env;
+        public CTarchivosController(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
+        [Authorize]
+        [HttpPost("subirArchivo")]
+        public async Task<IActionResult> subirArchivo([FromBody] ENsubidaArchivos DatosEnviados)
+        {
+            ENarchivos ent  = new ENarchivos();
+            try
+            {
+                var rutawwwroot = _env.ContentRootPath; //ruta de la carpeta wwwroot}
+                var rutaBase = DatosEnviados.TipoArchivo != null && DatosEnviados.TipoArchivo.ToLower() == "application/pdf"
+                ? Path.Combine(_env.ContentRootPath, "pdfs")
+                : Path.Combine(_env.ContentRootPath, "imagenes", "productos");
+                // Asegurar que la ruta está normalizada (sin ..)
+                rutawwwroot = Path.GetFullPath(rutaBase);
+
+
+                if (DatosEnviados.Token == "TOKENSUPERSECRETO")
+                {
+                    var idUsuarioJWT = User.FindFirst("id_usuario")?.Value;
+
+                    if (string.IsNullOrEmpty(idUsuarioJWT))
+                    {
+                        ent.MensajeConsulta = "No se pudo obtener el ID de usuario del token.";
+                        ent.ValorConsulta = "-101";
+                        return Ok(ent);
+                    }
+
+                    DatosEnviados.Id_usuario = idUsuarioJWT;
+
+                    //conectarse a la base de datos y traer el slug del producto con su indice de imagen
+                    var obtenerSlug = new LNarchivos().VERSION1_SP_recuperarSlugConIndiceProducto(DatosEnviados.Id_producto);
+
+                    if(obtenerSlug.ValorConsulta == "1")
+                    {
+                        ent = new LNarchivos().GuardarArchivo(
+                            DatosEnviados.ArchivoBase64, 
+                            obtenerSlug.NombreSlug, 
+                            Convert.ToInt32(obtenerSlug.IndiceImagen), 
+                            rutawwwroot, 
+                            DatosEnviados.Id_producto, 
+                            DatosEnviados.Id_usuario, 
+                            DatosEnviados.TipoArchivo);
+                    }
+                    else
+                    {
+                        ent.MensajeConsulta = "No se ha podido obtener el slug del producto";
+                        ent.ValorConsulta = "-200";
+                    }
+                }
+                else
+                {
+                    ent.MensajeConsulta = "Token incorrecto";
+                    ent.ValorConsulta = "-100";
+                }
+            }
+            catch (Exception ex)
+            {
+                ent.MensajeConsulta = "Entro al Catch -> " + ex.Message;
+                ent.ValorConsulta = "-99";
+            }
+
+            return Ok(ent);
+        }
+
+        public class ENsubidaArchivos
+        {
+            public string? Token { get; set; }
+            public string? Id_producto { get; set; }
+            public string? Id_usuario { get; set; }
+            public string? ArchivoBase64 { get; set; }
+            public string? TipoArchivo { get; set; }
+        }
+
+    }
+}

@@ -1,0 +1,49 @@
+﻿
+using CL_EN;
+using Microsoft.Data.SqlClient;
+using System.Data;
+
+namespace CL_AD
+{
+    public class ADproductos
+    {
+        MiConexion micx = new MiConexion();
+        public List<ENproductos> listarProductosPrincipales()
+        {
+            string cadenaConexion = micx.TraerMiConexion();
+            List<ENproductos> lista = new List<ENproductos>();
+            try
+            {
+                using var conexion = new SqlConnection(cadenaConexion);
+
+                using var reader = SqlHelper.ExecuteReader(conexion, CommandType.StoredProcedure, "VERSION1_SP_listarMenuProductoWeb");
+                while (reader.Read())
+                {
+                    ENproductos ent = new ENproductos();
+                    ent.Id_producto =  DataUtil.ObjectToString(reader["id_producto"]);
+                    ent.Codigo = DataUtil.ObjectToString(reader["codigo"]);
+                    ent.Nombre = DataUtil.ObjectToString(reader["nombre"]);
+                    ent.Descripcion = DataUtil.ObjectToString(reader["descripcion"]);
+                    ent.Precio = DataUtil.ObjectToDecimal(reader["precio"]);
+                    ent.Descuento = DataUtil.ObjectToDecimal(reader["descuento"]);
+                    ent.Stock = DataUtil.ObjectToDecimal(reader["stock"]);
+                    ent.ImagenPrincipal = DataUtil.ObjectToString(reader["url_imagen"]);
+                    ent.NombreSlug = DataUtil.ObjectToString(reader["nombre_slug"]);
+                    ent.MensajeConsulta = "OK";
+                    ent.ValorConsulta = "1";
+                    lista.Add(ent);
+                }
+            }
+            catch (Exception ex)
+            {
+                lista.Clear();
+                ENproductos ent = new ENproductos();
+                ent.MensajeConsulta = "ERROR : " + ex.Message;
+                ent.ValorConsulta = "-99";
+                lista.Add(ent);
+            }
+            return lista;
+        }
+
+    }
+}

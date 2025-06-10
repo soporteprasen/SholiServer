@@ -1,0 +1,579 @@
+use master
+GO
+--DROP DATABASE SHOLI
+CREATE DATABASE SHOLI
+GO
+USE SHOLI
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_marcas')
+BEGIN
+	CREATE TABLE t_marcas 
+	(
+		id_marca					int					identity(1,1)	primary key,
+		nombre						varchar(100)		not null,
+		descripcion					varchar(255)		not null		default(''),
+		slug_marca					varchar(255)		not null		default(''),
+		imagen_marca				varchar(max)		not null		default(''),
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_categorias')
+BEGIN
+	CREATE TABLE t_categorias 
+	(
+		id_categoria				int					identity(1,1)	primary key,
+		nombre						varchar(100)		not null,
+		descripcion					varchar(255)		not null		default(''),
+		slug_categoria				varchar(255)		not null		default(''),
+		imagen_categoria			varchar(max)		not null		default(''),
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_productos')
+BEGIN
+	CREATE TABLE t_productos 
+	(
+		id_producto					int identity(1,1)	primary key,
+		id_producto_practicontrol	int					not null,
+		codigo						varchar(100)		not null,
+		nombre						varchar(500)		not null,
+		descripcion					varchar(MAX)		not null,
+		precio						decimal(18,5)		not null,
+		descuento					decimal(18,5)		default 0,
+		stock						decimal(18,5)		not null,
+		id_marca					int					not null,
+		id_moneda					int					not null,
+		nombre_slug					varchar(60)			not null,
+		urlimagen1					varchar(max)		not null,
+		urlimagen2					varchar(max)		not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+		CONSTRAINT FK_producto_marca FOREIGN KEY (id_marca) REFERENCES t_marcas(id_marca)
+	);
+end
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_categorias_productos')
+BEGIN
+	CREATE TABLE t_categorias_productos 
+	(
+		id_categoria_producto		int					identity(1,1) primary key,
+		id_categoria				int					not null,
+		id_producto					int					not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1'),
+		CONSTRAINT FK_categorias_productos_cat FOREIGN KEY (id_categoria) REFERENCES t_categorias(id_categoria),
+		CONSTRAINT FK_categorias_productos_pro FOREIGN KEY (id_producto) REFERENCES t_productos(id_producto)
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_imagenes_productos')
+BEGIN
+	CREATE TABLE t_imagenes_productos
+	(
+		id_imagen_producto			int identity(1,1)	primary key,
+		id_producto					int					not null,
+		url_imagen					varchar(max)		not null,
+		es_principal				bit					DEFAULT 0,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+		CONSTRAINT FK_imagen_producto FOREIGN KEY (id_producto) REFERENCES t_productos(id_producto)
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_unidades_medidas')
+BEGIN
+	CREATE TABLE t_unidades_medidas 
+	(
+		id_unidad_medida			int identity(1,1)	primary key,
+		nombre						varchar(255)		not null,
+		abreviatura					varchar(10)			not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_productos_unidades_medidas')
+BEGIN
+	CREATE TABLE t_productos_unidades_medidas
+	(
+		id_producto_unidad_medida	int identity(1,1)	primary key,
+		id_producto					int					not null,
+		id_unidad_medida			int					not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+		CONSTRAINT FK_producto_unidad_producto FOREIGN KEY (id_producto) REFERENCES t_productos(id_producto),
+		CONSTRAINT FK_producto_unidad_unidad FOREIGN KEY (id_unidad_medida) REFERENCES t_unidades_medidas(id_unidad_medida)
+	);
+END
+GO
+
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_etiquetas_html')
+BEGIN
+	CREATE TABLE t_etiquetas_html
+	(
+		id_etiqueta_html			int identity(1,1)	primary key,
+		nombre_etiqueta				varchar(100)		not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_productos_etiquetas_html')
+BEGIN
+	CREATE TABLE t_productos_etiquetas_html
+	(
+		id_producto_etiqueta_html	int identity(1,1)	primary key,
+		id_producto					int					not null,
+		id_etiqueta_html			int					not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+		CONSTRAINT FK_producto_etiqueta_producto FOREIGN KEY (id_producto) REFERENCES t_productos(id_producto),
+		CONSTRAINT FK_producto_etiqueta_html FOREIGN KEY (id_etiqueta_html) REFERENCES t_etiquetas_html(id_etiqueta_html)
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_atributos')
+BEGIN
+	CREATE TABLE t_atributos
+	(
+		id_atributo	int identity(1,1)		primary key,
+		nombre						varchar(255)		not null,
+		unidad						varchar(255)		not null,
+		texto1						varchar(255)		not null,
+		texto2						varchar(255)		not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+	);
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.TABLES  WHERE name = 't_productos_atributos')
+BEGIN
+	CREATE TABLE t_productos_atributos
+	(
+		id_producto_atributo		int identity(1,1)	primary key,
+		id_producto					int					not null,
+		id_atributo					int					not null,
+		valor						varchar(255)		not null,
+		fecha1						datetime,
+		fecha2						datetime,
+		usu1						int,
+		usu2						int,
+		estado						char(1)				default('1')
+		CONSTRAINT FK_producto_atributo_producto FOREIGN KEY (id_producto) REFERENCES t_productos(id_producto),
+		CONSTRAINT FK_producto_atributo_atributo FOREIGN KEY (id_atributo) REFERENCES t_atributos(id_atributo)
+	);
+END
+GO
+
+
+CREATE FUNCTION dbo.dReturnDate(@dFecha as datetime)
+returns DATETIME
+as
+begin
+return @dFecha
+end
+
+go
+
+/********************************************
+PROCEDIMIENTOS PARA MANTENIMIENTOS DE TABLAS
+********************************************/
+
+
+/*
+PROCEDIMIENTOS DE GUARDADO
+*/
+
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardarMarcaWeb')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardarMarcaWeb')
+end
+go
+Create PROCEDURE VERSION1_SP_guardarMarcaWeb
+@nombre varchar(100),
+@id_usuario int
+as
+declare @result char(3)
+begin
+	
+	if not exists(select 1 from t_marcas where nombre = @nombre)
+	begin
+		insert into t_marcas (nombre, fecha1, fecha2, usu1, usu2, estado)
+		values(@nombre, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+		if @@ROWCOUNT = 0
+		begin
+			set @result = '2'
+		end
+		else
+		begin
+			set @result = '1'
+		end
+	end
+	else
+	begin
+		update t_marcas set estado = '1', usu2 = @id_usuario where nombre = @nombre
+		if @@ROWCOUNT = 0
+		begin
+			set @result = '2'
+		end
+		else
+		begin
+			set @result = '11'
+		end
+	end
+	select @result as 'Resultado'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardarCategoriaWeb')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardarCategoriaWeb')
+end
+go
+Create PROCEDURE VERSION1_SP_guardarCategoriaWeb
+@nombre varchar(100),
+@id_usuario int
+as
+declare @result char(3)
+begin
+	
+	if not exists(select 1 from t_categorias where nombre = @nombre)
+	begin
+		insert into t_categorias(nombre, fecha1, fecha2, usu1, usu2, estado)
+		values(@nombre, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+		if @@ROWCOUNT = 0
+		begin
+			set @result = '2'
+		end
+		else
+		begin
+			set @result = '1'
+		end
+	end
+	else
+	begin
+		update t_categorias set estado = '1', usu2 = @id_usuario where nombre = @nombre
+		if @@ROWCOUNT = 0
+		begin
+			set @result = '2'
+		end
+		else
+		begin
+			set @result = '11'
+		end
+	end
+	
+	select @result as 'Resultado'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardarProductoWeb')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardarProductoWeb')
+end
+go
+Create PROCEDURE VERSION1_SP_guardarProductoWeb
+@codigo varchar(100),
+@nombre varchar(500),
+@descripcion varchar(max),
+@precio decimal(18,5),
+@descuento decimal(18,5),
+@stock decimal(18,5),
+@nombre_slug varchar(60),
+@urlimagen1 varchar(max),
+@urlimagen2 varchar(max),
+@id_marca int,
+@id_categoria int,
+@id_usuario int
+as
+declare @result char(3)
+begin
+	
+	if not exists(select 1 from t_productos where nombre = @nombre)
+	begin
+
+		declare @categoriabuscada varchar(100);
+		set @categoriabuscada = (select id_categoria from t_categorias where id_categoria = @id_categoria)
+
+		if(@categoriabuscada > 0)
+		begin
+			declare @id_producto int;
+			insert into t_productos(id_producto_practicontrol, codigo, nombre, descripcion, precio, descuento, stock, nombre_slug, urlimagen1, urlimagen2, id_marca, id_moneda, fecha1, fecha2, usu1, usu2, estado)
+			values(0, @codigo, @nombre, @descripcion, @precio, @descuento, @stock, @nombre_slug, @urlimagen1, @urlimagen2, @id_marca, 1, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+			set @id_producto = SCOPE_IDENTITY();
+			if @@ROWCOUNT = 0
+				begin
+					set @result = '2'
+				end
+			else
+				begin
+					insert into t_categorias_productos(id_categoria, id_producto, fecha1, fecha2, usu1, usu2, estado)
+					values(@id_categoria, @id_producto, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+					if @@ROWCOUNT = 0
+						begin
+							set @result = '2'
+						end
+					else
+						begin
+							set @result = '1'
+						end
+				end
+		end
+		else
+		begin
+			set @result = '22' --No se ha identificado una marca valida
+		end
+	end
+	else
+	begin
+		set @result = '33' --ya existe un producto registrado
+	end
+	
+	select @result as 'Resultado'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardarImagenProductoWeb')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardarImagenProductoWeb')
+end
+go
+Create PROCEDURE VERSION1_SP_guardarImagenProductoWeb
+@id_producto int,
+@url_imagen varchar(max),
+@es_principal bit,
+@id_usuario int
+as
+declare @result char(3)
+begin
+	
+	insert into t_imagenes_productos(id_producto, url_imagen, es_principal, fecha1, fecha2, usu1, usu2, estado)
+	values(@id_producto, @url_imagen, @es_principal,dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+
+	if @@ROWCOUNT = 0
+		begin
+			set @result = '2'
+		end
+	else
+		begin
+			set @result = '1'
+		end
+	select @result as 'Resultado'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardarRutaImagenPorProducto')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardarRutaImagenPorProducto')
+end
+go
+Create PROCEDURE VERSION1_SP_guardarRutaImagenPorProducto
+@id_producto int,
+@url_imagen varchar(500),
+@id_usuario int
+as
+declare @result char(1)
+begin
+	insert into t_imagenes_productos(id_producto, url_imagen, es_principal, fecha1, fecha2, usu1, usu2, estado)
+	values(@id_producto, @url_imagen, 0, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+	if @@ROWCOUNT = 0
+		begin
+			set @result = '2'
+		end
+	else
+		begin
+			set @result = '1'
+		end
+	select @result as 'Resultado'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardar_marcas_productos')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardar_marcas_productos')
+end
+go
+Create PROCEDURE VERSION1_SP_guardar_marcas_productos
+@nombre varchar(255), @descripcion varchar(255), @slug_marca varchar(255), @imagen_marca varchar(max), @id_usuario int
+as
+declare @result char(1)
+begin
+	if not exists(select 1 from t_marcas where nombre = @nombre)
+	begin
+		insert into t_marcas(nombre, descripcion, slug_marca, imagen_marca, fecha1, fecha2, usu1, usu2, estado)
+		values(@nombre, @descripcion, @slug_marca, @imagen_marca, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+
+		if @@ROWCOUNT = 0
+			begin
+				set @result = '2'
+			end
+		else
+			begin
+				set @result = '1'
+			end
+	end
+	else
+	begin
+		set @result = '3'
+	end
+	select @result as 'Resultado'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_guardar_categorias_productos')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_guardar_categorias_productos')
+end
+go
+Create PROCEDURE VERSION1_SP_guardar_categorias_productos
+@nombre varchar(255), @descripcion varchar(255), @slug_categoria varchar(255), @imagen_categoria varchar(max), @id_usuario int
+as
+declare @result char(1)
+begin
+
+	if not exists(select 1 from t_categorias where nombre = @nombre)
+	begin
+		insert into t_categorias(nombre, descripcion, slug_categoria, imagen_categoria, fecha1, fecha2, usu1, usu2, estado)
+		values(@nombre, @descripcion, LOWER(@slug_categoria), @imagen_categoria, dbo.dReturnDate(GETDATE()), dbo.dReturnDate(GETDATE()), @id_usuario, @id_usuario, '1')
+		if @@ROWCOUNT = 0
+			begin
+				set @result = '2'
+			end
+		else
+			begin
+				set @result = '1'
+			end
+	end
+	else
+	begin
+		set @result = '3'
+	end
+	
+	select @result as 'Resultado'
+end
+GO
+
+
+
+
+/*
+PROCEDIMIENTOS DE LISTADO
+*/
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_listarMenuProductoWeb')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_listarMenuProductoWeb')
+end
+go
+Create PROCEDURE VERSION1_SP_listarMenuProductoWeb
+as
+begin
+	select pro.id_producto, 
+	pro.codigo, 
+	pro.nombre, 
+	pro.descripcion, 
+	pro.precio, 
+	pro.descuento, 
+	pro.stock, 
+	pro.nombre_slug, 
+	pro.urlimagen1, 
+	pro.urlimagen2, 
+	ma.nombre as 'marca', 
+	ca.nombre as 'categoria', 
+	ca.slug_categoria
+	from t_productos as pro
+	inner join t_marcas as ma on ma.id_marca = pro.id_marca
+	inner join t_categorias_productos as cp on cp.id_producto = pro.id_producto
+	inner join t_categorias as ca on ca.id_categoria = cp.id_categoria
+	where pro.estado = '1' and ma.estado = '1' and ca.estado = '1'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_recuperarSlugConIndiceProducto')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_recuperarSlugConIndiceProducto')
+end
+go
+Create PROCEDURE VERSION1_SP_recuperarSlugConIndiceProducto
+@id_producto int
+as
+begin
+	declare @nombreSlug varchar(255)
+	declare @indiceImagenes int
+	set @nombreSlug = (select nombre_slug from t_productos where id_producto = @id_producto)
+	set @indiceImagenes = (select count(1) from t_imagenes_productos where id_producto = @id_producto)
+
+	select @nombreSlug as 'NombreSlug', @indiceImagenes + 1 as 'IndiceImagen'
+end
+GO
+
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_listar_marcas')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_listar_marcas')
+end
+go
+Create PROCEDURE VERSION1_SP_listar_marcas
+as
+begin
+	select m.id_marca, m.nombre, m.descripcion, m.slug_marca, m.imagen_marca from t_marcas as m where estado = '1'
+end
+GO
+
+IF  EXISTS (SELECT NAME FROM sys.objects WHERE TYPE = 'P' AND NAME = 'VERSION1_SP_listar_categorias_productos')
+BEGIN
+EXEC('Drop  PROCEDURE VERSION1_SP_listar_categorias_productos')
+end
+go
+Create PROCEDURE VERSION1_SP_listar_categorias_productos
+as
+begin
+	select c.id_categoria, c.nombre, c.descripcion, c.slug_categoria, c.imagen_categoria from t_categorias as c where estado = '1'
+end
+GO
+
